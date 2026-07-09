@@ -3,6 +3,7 @@
   <Project Path="Hominder.Application/Hominder.Application.csproj" />
   <Project Path="Hominder.Domain/Hominder.Domain.csproj" />
   <Project Path="Hominder.Infrastructure/Hominder.Infrastructure.csproj" />
+  <Project Path="Hominder.Test.Architecture/Hominder.Test.Architecture.csproj" />
   <Project Path="Hominder.Test.Integration/Hominder.Test.Integration.csproj" />
   <Project Path="Hominder.Test.Unit/Hominder.Test.Unit.csproj" />
 </Solution>
