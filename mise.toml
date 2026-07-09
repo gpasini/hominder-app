@@ -1,3 +1,22 @@
+monorepo_root = true
+
+[settings]
+experimental = true
+
+[env]
+DOCKER_BUILDKIT = "1"
+
+[monorepo]
+config_roots = [
+    "backend",
+    "frontend",
+]
+
 [tools]
 dotnet = "10.0.301"
 node = "24.18.0"
+colima = "0.10.3"
+lima = "2.1.4"
+docker-cli = "29.6.1"
+docker-compose = "5.3.1"
+"aqua:docker/buildx" = "0.35.0"

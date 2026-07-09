@@ -19,10 +19,48 @@ la rendre explicite via le nommage ou une abstraction — pas via un commentaire
 
 ## Outillage (mise)
 
-La toolchain (`dotnet`, `node`, …) est gérée par **mise**, avec les versions épinglées
-dans `mise.toml`. mise est activé dans le shell : **utiliser les outils directement**
-(`dotnet build`, `dotnet test`, `npm run …`) — ne pas les préfixer par `mise exec` ni
-`mise run`.
+La toolchain (`dotnet`, `node`, `colima`, `docker`, …) est gérée par **mise**, avec les
+versions épinglées dans `mise.toml`. mise est activé dans le shell : **utiliser les outils
+directement** (`dotnet build`, `dotnet test`, `npm run …`) — ne pas les préfixer par
+`mise exec` ni `mise run`.
+
+## Setup
+
+Après un clone, ou après une montée de version des outils dans `mise.toml` :
+
+```sh
+mise install
+```
+
+Docker Compose et Buildx sont installés par mise mais doivent être exposés comme plugins
+de la CLI `docker` (étape locale à la machine, hors dépôt). À refaire après un changement
+de version de ces deux outils :
+
+```sh
+mkdir -p ~/.docker/cli-plugins
+ln -sf "$(mise which docker-cli-plugin-docker-compose)" ~/.docker/cli-plugins/docker-compose
+ln -sf "$(mise which docker-cli-plugin-docker-buildx)" ~/.docker/cli-plugins/docker-buildx
+```
+
+Docker tourne via **colima** (VM Linux, driver `vz`). Les tasks de build le démarrent
+automatiquement ; pour piloter la VM à la main : `colima start` / `colima stop`.
+
+## Docker
+
+Les images sont construites via des **file tasks mise** (mode monorepo) :
+
+```sh
+mise //backend:build
+mise //frontend:build
+mise //...:build
+```
+
+`//backend:build` produit l'image `hominder-api`, `//frontend:build` produit `hominder-web`,
+et `//...:build` construit les deux.
+
+- Chaque build dépend de `//:colima-up`, qui démarre colima s'il ne tourne pas.
+- Dockerfiles multi-stage, runtimes non-root (`aspnet` chiseled / `nginx-unprivileged`),
+  BuildKit requis (fourni par le plugin buildx).
 
 ## Backend (.NET)
 
