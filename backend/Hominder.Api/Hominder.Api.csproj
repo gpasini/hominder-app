@@ -8,8 +8,12 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.9" />
-    <!-- Pin patched Microsoft.OpenApi to fix GHSA-v5pm-xwqc-g5wc (CVE-2026-49451) -->
     <PackageReference Include="Microsoft.OpenApi" Version="2.7.5" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Hominder.Application\Hominder.Application.csproj" />
+    <ProjectReference Include="..\Hominder.Infrastructure\Hominder.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>
