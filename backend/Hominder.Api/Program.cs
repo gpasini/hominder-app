@@ -1,6 +1,12 @@
+using Autofac.Extensions.DependencyInjection;
+using Hominder.Application;
+
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
+
 builder.Services.AddOpenApi();
+builder.Services.AddApplication();
 
 var app = builder.Build();
 
