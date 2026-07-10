@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+#MISE description="Build the frontend web Docker image"
+#MISE depends=["//:colima-up"]
+set -euo pipefail
+docker build -t hominder-web .
