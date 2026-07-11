@@ -48,6 +48,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.MapMaintenanceTaskEndpoints();
+app.MapHouseholdMemberEndpoints();
 
 app.MapGet("/health", () => Results.Ok(new { status = "ok" }));
 
