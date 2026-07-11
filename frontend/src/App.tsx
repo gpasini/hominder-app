@@ -60,6 +60,7 @@ function App() {
 
       {showForm ? (
         <TaskForm
+          key={taskToEdit?.id ?? 'new'}
           members={memberList}
           initialTask={taskToEdit ?? undefined}
           onCancel={closeForm}

@@ -1,6 +1,5 @@
 using Hominder.Application.Common.Messaging;
 using Hominder.Application.Common.Persistence;
-using Hominder.Application.Maintenance;
 using Hominder.Domain.Household;
 using Hominder.Domain.Maintenance;
 using MediatR;

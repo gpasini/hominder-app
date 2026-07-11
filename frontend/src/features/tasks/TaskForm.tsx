@@ -37,12 +37,20 @@ function isPolicyComplete(policy: RecurrencePolicyInput): boolean {
     case 'Interval':
       return (
         policy.intervalAmount !== null &&
+        policy.intervalAmount >= 1 &&
         policy.intervalUnit !== null &&
         policy.startReference !== null &&
         policy.startReference.length > 0
       )
     case 'MonthWindow':
-      return policy.startMonth !== null && policy.endMonth !== null
+      return (
+        policy.startMonth !== null &&
+        policy.startMonth >= 1 &&
+        policy.startMonth <= 12 &&
+        policy.endMonth !== null &&
+        policy.endMonth >= 1 &&
+        policy.endMonth <= 12
+      )
     case 'FixedDate':
     case 'OneOff':
       return policy.dueDate !== null && policy.dueDate.length > 0
