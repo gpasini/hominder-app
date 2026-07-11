@@ -18,4 +18,7 @@ public sealed class HouseholdMember : AggregateRoot<HouseholdMemberId>
 
         return new HouseholdMember(HouseholdMemberId.New(), name.Trim());
     }
+
+    public void Delete() =>
+        RaiseDomainEvent(new HouseholdMemberDeletedDomainEvent(Id, DateTime.UtcNow));
 }

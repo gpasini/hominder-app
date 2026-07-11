@@ -1,5 +1,6 @@
 using Hominder.Application.Common.Exceptions;
 using Hominder.Application.Household.Commands;
+using Hominder.Application.Household.Events;
 using Hominder.Application.Household.Queries;
 using Hominder.Application.Maintenance;
 using Hominder.Domain.Household;
@@ -29,30 +30,42 @@ public class HouseholdMemberFeaturesTests
     [Fact]
     public async Task Delete_UnknownMember_Throws()
     {
-        var handler = new DeleteHouseholdMemberHandler(
-            new InMemoryHouseholdMemberRepository(), new InMemoryMaintenanceTaskRepository());
+        var handler = new DeleteHouseholdMemberHandler(new InMemoryHouseholdMemberRepository());
 
         await Assert.ThrowsAsync<NotFoundException>(() => handler.Handle(
             new DeleteHouseholdMemberCommand(Guid.NewGuid()), CancellationToken.None));
     }
 
     [Fact]
-    public async Task Delete_UnassignsTasksAndRemovesMember()
+    public async Task Delete_RemovesMemberAndRaisesDeletedEvent()
     {
         var members = new InMemoryHouseholdMemberRepository();
         var member = HouseholdMember.Create("Grégory");
         members.Items.Add(member);
+
+        var handler = new DeleteHouseholdMemberHandler(members);
+
+        await handler.Handle(new DeleteHouseholdMemberCommand(member.Id.Value), CancellationToken.None);
+
+        Assert.Empty(members.Items);
+        Assert.Contains(member.DomainEvents, domainEvent => domainEvent is HouseholdMemberDeletedDomainEvent);
+    }
+
+    [Fact]
+    public async Task MemberDeleted_UnassignsTasksAssignedToMember()
+    {
+        var member = HouseholdMember.Create("Grégory");
 
         var tasks = new InMemoryMaintenanceTaskRepository();
         var task = MaintenanceTask.Create(
             "Tailler l'olivier", null, RecurrencePolicyFactory.Create(SpringWindow()), member.Id);
         tasks.Items.Add(task);
 
-        var handler = new DeleteHouseholdMemberHandler(members, tasks);
+        var handler = new HouseholdMemberDeletedHandler(tasks);
 
-        await handler.Handle(new DeleteHouseholdMemberCommand(member.Id.Value), CancellationToken.None);
+        await handler.Handle(
+            new HouseholdMemberDeletedDomainEvent(member.Id, DateTime.UtcNow), CancellationToken.None);
 
-        Assert.Empty(members.Items);
         Assert.Null(task.AssigneeId);
     }
 
