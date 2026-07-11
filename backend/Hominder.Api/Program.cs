@@ -1,5 +1,6 @@
 using System.Text.Json.Serialization;
 using Autofac.Extensions.DependencyInjection;
+using Hominder.Api.Endpoints;
 using Hominder.Api.ExceptionHandling;
 using Hominder.Application;
 using Hominder.Infrastructure;
@@ -45,6 +46,8 @@ if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
 }
+
+app.MapMaintenanceTaskEndpoints();
 
 app.MapGet("/health", () => Results.Ok(new { status = "ok" }));
 
