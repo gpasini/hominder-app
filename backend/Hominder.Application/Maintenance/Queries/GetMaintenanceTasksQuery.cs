@@ -1,5 +1,6 @@
 using Hominder.Application.Common.Messaging;
 using Hominder.Application.Common.Persistence;
+using Hominder.Application.Maintenance;
 using Hominder.Domain.Household;
 using Hominder.Domain.Maintenance;
 using MediatR;
@@ -58,7 +59,8 @@ public sealed class GetMaintenanceTasksHandler
             evaluation.DaysOverdue,
             task.AssigneeId?.Value,
             assigneeName,
-            task.Policy.RequiresNextDueOverride);
+            task.Policy.RequiresNextDueOverride,
+            RecurrencePolicyMapper.ToInput(task.Policy));
     }
 
     private static int UrgencyRank(string status) => status switch

@@ -6,19 +6,39 @@ import { MarkDoneDialog } from './features/tasks/MarkDoneDialog'
 import { TaskForm } from './features/tasks/TaskForm'
 import { TaskList } from './features/tasks/TaskList'
 import type { TaskView } from './features/tasks/taskStatus'
-import { useCreateTask, useDeleteTask, useMarkTaskDone, useTasks } from './features/tasks/useTasks'
+import {
+  useCreateTask,
+  useDeleteTask,
+  useMarkTaskDone,
+  useTasks,
+  useUpdateTask,
+} from './features/tasks/useTasks'
 
 function App() {
   const tasks = useTasks()
   const members = useMembers()
   const createTask = useCreateTask()
+  const updateTask = useUpdateTask()
   const deleteTask = useDeleteTask()
   const markDone = useMarkTaskDone()
 
   const [showForm, setShowForm] = useState(false)
+  const [taskToEdit, setTaskToEdit] = useState<TaskView | null>(null)
   const [taskToComplete, setTaskToComplete] = useState<TaskView | null>(null)
 
   const memberList = members.data ?? []
+
+  const closeForm = () => {
+    setShowForm(false)
+    setTaskToEdit(null)
+  }
+
+  const taskError =
+    createTask.error?.message ??
+    updateTask.error?.message ??
+    deleteTask.error?.message ??
+    markDone.error?.message ??
+    null
 
   return (
     <main>
@@ -26,16 +46,29 @@ function App() {
         <h1>Hominder</h1>
       </header>
 
-      <button type="button" onClick={() => setShowForm(true)}>
+      <button
+        type="button"
+        onClick={() => {
+          setTaskToEdit(null)
+          setShowForm(true)
+        }}
+      >
         Nouvelle tâche
       </button>
+
+      {taskError ? <p role="alert">{taskError}</p> : null}
 
       {showForm ? (
         <TaskForm
           members={memberList}
-          onCancel={() => setShowForm(false)}
+          initialTask={taskToEdit ?? undefined}
+          onCancel={closeForm}
           onSubmit={(input) => {
-            createTask.mutate(input, { onSuccess: () => setShowForm(false) })
+            if (taskToEdit) {
+              updateTask.mutate({ id: taskToEdit.id, input }, { onSuccess: closeForm })
+            } else {
+              createTask.mutate(input, { onSuccess: closeForm })
+            }
           }}
         />
       ) : null}
@@ -45,7 +78,10 @@ function App() {
       <TaskList
         tasks={tasks.data ?? []}
         onMarkDone={(task) => setTaskToComplete(task)}
-        onEdit={() => undefined}
+        onEdit={(task) => {
+          setTaskToEdit(task)
+          setShowForm(true)
+        }}
         onDelete={(task) => deleteTask.mutate(task.id)}
       />
 

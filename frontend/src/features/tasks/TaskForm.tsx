@@ -1,10 +1,11 @@
 import { useState } from 'react'
 import type { Member } from '../members/useMembers'
-import type { RecurrenceKind, RecurrencePolicyInput, RecurrenceUnit } from './taskStatus'
+import type { RecurrenceKind, RecurrencePolicyInput, RecurrenceUnit, TaskView } from './taskStatus'
 import type { TaskInput } from './useTasks'
 
 type TaskFormProps = {
   members: Member[]
+  initialTask?: TaskView
   onSubmit: (input: TaskInput) => void
   onCancel: () => void
 }
@@ -19,17 +20,52 @@ const emptyPolicy: RecurrencePolicyInput = {
   dueDate: null,
 }
 
-export function TaskForm({ members, onSubmit, onCancel }: TaskFormProps) {
-  const [title, setTitle] = useState('')
-  const [notes, setNotes] = useState('')
-  const [assigneeId, setAssigneeId] = useState('')
-  const [policy, setPolicy] = useState<RecurrencePolicyInput>(emptyPolicy)
+function defaultPolicyFor(kind: RecurrenceKind): RecurrencePolicyInput {
+  switch (kind) {
+    case 'Interval':
+      return { ...emptyPolicy, kind, intervalAmount: 1, intervalUnit: 'Years' }
+    case 'MonthWindow':
+      return { ...emptyPolicy, kind, startMonth: 3, endMonth: 5 }
+    case 'FixedDate':
+    case 'OneOff':
+      return { ...emptyPolicy, kind }
+  }
+}
+
+function isPolicyComplete(policy: RecurrencePolicyInput): boolean {
+  switch (policy.kind) {
+    case 'Interval':
+      return (
+        policy.intervalAmount !== null &&
+        policy.intervalUnit !== null &&
+        policy.startReference !== null &&
+        policy.startReference.length > 0
+      )
+    case 'MonthWindow':
+      return policy.startMonth !== null && policy.endMonth !== null
+    case 'FixedDate':
+    case 'OneOff':
+      return policy.dueDate !== null && policy.dueDate.length > 0
+  }
+}
+
+export function TaskForm({ members, initialTask, onSubmit, onCancel }: TaskFormProps) {
+  const [title, setTitle] = useState(initialTask?.title ?? '')
+  const [notes, setNotes] = useState(initialTask?.notes ?? '')
+  const [assigneeId, setAssigneeId] = useState(initialTask?.assigneeId ?? '')
+  const [policy, setPolicy] = useState<RecurrencePolicyInput>(initialTask?.policy ?? emptyPolicy)
+  const [validationMessage, setValidationMessage] = useState<string | null>(null)
 
   const submit = (event: React.FormEvent) => {
     event.preventDefault()
     if (title.trim().length === 0) {
       return
     }
+    if (!isPolicyComplete(policy)) {
+      setValidationMessage('Merci de compléter les champs de récurrence.')
+      return
+    }
+    setValidationMessage(null)
     onSubmit({
       title: title.trim(),
       notes: notes.trim().length === 0 ? null : notes.trim(),
@@ -38,7 +74,7 @@ export function TaskForm({ members, onSubmit, onCancel }: TaskFormProps) {
     })
   }
 
-  const setKind = (kind: RecurrenceKind) => setPolicy({ ...emptyPolicy, kind })
+  const setKind = (kind: RecurrenceKind) => setPolicy(defaultPolicyFor(kind))
 
   return (
     <form onSubmit={submit}>
@@ -112,6 +148,8 @@ export function TaskForm({ members, onSubmit, onCancel }: TaskFormProps) {
           onChange={(event) => setPolicy({ ...policy, dueDate: event.target.value })}
         />
       ) : null}
+
+      {validationMessage ? <p role="alert">{validationMessage}</p> : null}
 
       <button type="submit">Enregistrer</button>
       <button type="button" onClick={onCancel}>

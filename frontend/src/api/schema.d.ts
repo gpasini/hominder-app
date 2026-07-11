@@ -58,7 +58,9 @@ export interface paths {
                     headers: {
                         [name: string]: unknown;
                     };
-                    content?: never;
+                    content: {
+                        "application/json": components["schemas"]["MaintenanceTaskView"][];
+                    };
                 };
             };
         };
@@ -290,6 +292,24 @@ export interface components {
             policy: components["schemas"]["RecurrencePolicyInput"];
             /** Format: uuid */
             assigneeId: null | string;
+        };
+        MaintenanceTaskView: {
+            /** Format: uuid */
+            id: string;
+            title: string;
+            notes: null | string;
+            status: string;
+            /** Format: date */
+            openDate: string;
+            /** Format: date */
+            dueDate: string;
+            /** Format: int32 */
+            daysOverdue: number | string;
+            /** Format: uuid */
+            assigneeId: null | string;
+            assigneeName: null | string;
+            requiresNextDueOverride: boolean;
+            policy: components["schemas"]["RecurrencePolicyInput"];
         };
         MarkMaintenanceTaskDoneRequest: {
             /** Format: date */

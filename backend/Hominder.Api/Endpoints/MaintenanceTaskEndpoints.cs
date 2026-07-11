@@ -2,6 +2,7 @@ using Hominder.Application.Maintenance;
 using Hominder.Application.Maintenance.Commands;
 using Hominder.Application.Maintenance.Queries;
 using MediatR;
+using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace Hominder.Api.Endpoints;
 
@@ -20,8 +21,9 @@ public static class MaintenanceTaskEndpoints
     {
         var group = routes.MapGroup("/api/tasks");
 
-        group.MapGet("", async (ISender sender, CancellationToken cancellationToken) =>
-            Results.Ok(await sender.Send(new GetMaintenanceTasksQuery(), cancellationToken)));
+        group.MapGet("", async Task<Ok<IReadOnlyList<MaintenanceTaskView>>> (
+            ISender sender, CancellationToken cancellationToken) =>
+            TypedResults.Ok(await sender.Send(new GetMaintenanceTasksQuery(), cancellationToken)));
 
         group.MapPost("", async (
             CreateMaintenanceTaskRequest request, ISender sender, CancellationToken cancellationToken) =>

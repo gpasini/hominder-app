@@ -12,6 +12,15 @@ const view = (id: string, status: TaskView['status']): TaskView => ({
   assigneeId: null,
   assigneeName: null,
   requiresNextDueOverride: false,
+  policy: {
+    kind: 'MonthWindow',
+    intervalAmount: null,
+    intervalUnit: null,
+    startReference: null,
+    startMonth: 3,
+    endMonth: 5,
+    dueDate: null,
+  },
 })
 
 test('statusLabel maps to French labels', () => {

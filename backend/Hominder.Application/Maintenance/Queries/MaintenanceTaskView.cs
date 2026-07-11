@@ -10,4 +10,5 @@ public sealed record MaintenanceTaskView(
     int DaysOverdue,
     Guid? AssigneeId,
     string? AssigneeName,
-    bool RequiresNextDueOverride);
+    bool RequiresNextDueOverride,
+    RecurrencePolicyInput Policy);

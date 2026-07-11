@@ -1,5 +1,7 @@
 using System.Net;
 using System.Net.Http.Json;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Hominder.Application.Maintenance;
 using Hominder.Application.Maintenance.Queries;
 
@@ -7,6 +9,12 @@ namespace Hominder.Test.Integration;
 
 public class MaintenanceTaskEndpointsTests : IClassFixture<HominderApiFactory>
 {
+    private static readonly JsonSerializerOptions JsonOptions = new()
+    {
+        PropertyNameCaseInsensitive = true,
+        Converters = { new JsonStringEnumConverter() },
+    };
+
     private readonly HominderApiFactory _factory;
 
     public MaintenanceTaskEndpointsTests(HominderApiFactory factory) => _factory = factory;
@@ -27,7 +35,7 @@ public class MaintenanceTaskEndpointsTests : IClassFixture<HominderApiFactory>
             "/api/tasks", new CreateBody("Tailler l'olivier", null, policy, null));
         Assert.Equal(HttpStatusCode.Created, create.StatusCode);
 
-        var tasks = await client.GetFromJsonAsync<List<MaintenanceTaskView>>("/api/tasks");
+        var tasks = await client.GetFromJsonAsync<List<MaintenanceTaskView>>("/api/tasks", JsonOptions);
 
         Assert.NotNull(tasks);
         Assert.Contains(tasks!, task => task.Title == "Tailler l'olivier");
