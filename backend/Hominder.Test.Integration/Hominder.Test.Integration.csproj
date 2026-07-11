@@ -21,6 +21,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Hominder.Api\Hominder.Api.csproj" />
+    <ProjectReference Include="..\Hominder.Infrastructure\Hominder.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>
