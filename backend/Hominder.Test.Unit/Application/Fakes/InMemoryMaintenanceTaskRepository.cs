@@ -7,17 +7,19 @@ public sealed class InMemoryMaintenanceTaskRepository : IMaintenanceTaskReposito
 {
     public List<MaintenanceTask> Items { get; } = [];
 
-    public Task AddAsync(MaintenanceTask task, CancellationToken cancellationToken = default)
-    {
-        Items.Add(task);
-        return Task.CompletedTask;
-    }
-
     public Task<MaintenanceTask?> GetByIdAsync(MaintenanceTaskId id, CancellationToken cancellationToken = default) =>
         Task.FromResult(Items.FirstOrDefault(task => task.Id == id));
 
     public Task<IReadOnlyList<MaintenanceTask>> GetAllAsync(CancellationToken cancellationToken = default) =>
         Task.FromResult<IReadOnlyList<MaintenanceTask>>(Items);
+
+    public void Save(MaintenanceTask task)
+    {
+        if (!Items.Contains(task))
+        {
+            Items.Add(task);
+        }
+    }
 
     public void Remove(MaintenanceTask task) => Items.Remove(task);
 }

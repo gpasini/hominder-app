@@ -18,12 +18,12 @@ public sealed class CreateMaintenanceTaskHandler : IRequestHandler<CreateMainten
 
     public CreateMaintenanceTaskHandler(IMaintenanceTaskRepository repository) => _repository = repository;
 
-    public async Task<Guid> Handle(CreateMaintenanceTaskCommand request, CancellationToken cancellationToken)
+    public Task<Guid> Handle(CreateMaintenanceTaskCommand request, CancellationToken cancellationToken)
     {
         var policy = RecurrencePolicyFactory.Create(request.Policy);
         var assignee = request.AssigneeId is Guid value ? new HouseholdMemberId(value) : (HouseholdMemberId?)null;
         var task = MaintenanceTask.Create(request.Title, request.Notes, policy, assignee);
-        await _repository.AddAsync(task, cancellationToken);
-        return task.Id.Value;
+        _repository.Save(task);
+        return Task.FromResult(task.Id.Value);
     }
 }

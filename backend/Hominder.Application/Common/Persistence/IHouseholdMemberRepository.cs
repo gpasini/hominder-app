@@ -4,11 +4,11 @@ namespace Hominder.Application.Common.Persistence;
 
 public interface IHouseholdMemberRepository
 {
-    Task AddAsync(HouseholdMember member, CancellationToken cancellationToken = default);
-
     Task<HouseholdMember?> GetByIdAsync(HouseholdMemberId id, CancellationToken cancellationToken = default);
 
     Task<IReadOnlyList<HouseholdMember>> GetAllAsync(CancellationToken cancellationToken = default);
+
+    void Save(HouseholdMember member);
 
     void Remove(HouseholdMember member);
 }

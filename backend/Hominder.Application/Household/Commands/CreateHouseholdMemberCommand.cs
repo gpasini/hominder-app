@@ -13,10 +13,10 @@ public sealed class CreateHouseholdMemberHandler : IRequestHandler<CreateHouseho
 
     public CreateHouseholdMemberHandler(IHouseholdMemberRepository repository) => _repository = repository;
 
-    public async Task<Guid> Handle(CreateHouseholdMemberCommand request, CancellationToken cancellationToken)
+    public Task<Guid> Handle(CreateHouseholdMemberCommand request, CancellationToken cancellationToken)
     {
         var member = HouseholdMember.Create(request.Name);
-        await _repository.AddAsync(member, cancellationToken);
-        return member.Id.Value;
+        _repository.Save(member);
+        return Task.FromResult(member.Id.Value);
     }
 }

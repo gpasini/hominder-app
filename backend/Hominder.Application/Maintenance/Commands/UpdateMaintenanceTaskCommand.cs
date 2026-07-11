@@ -27,5 +27,6 @@ public sealed class UpdateMaintenanceTaskHandler : IRequestHandler<UpdateMainten
         var policy = RecurrencePolicyFactory.Create(request.Policy);
         var assignee = request.AssigneeId is Guid value ? new HouseholdMemberId(value) : (HouseholdMemberId?)null;
         task.Update(request.Title, request.Notes, policy, assignee);
+        _repository.Save(task);
     }
 }

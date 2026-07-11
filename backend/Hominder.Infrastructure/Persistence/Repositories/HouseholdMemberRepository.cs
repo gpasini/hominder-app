@@ -10,14 +10,19 @@ public sealed class HouseholdMemberRepository : IHouseholdMemberRepository
 
     public HouseholdMemberRepository(HominderDbContext context) => _context = context;
 
-    public async Task AddAsync(HouseholdMember member, CancellationToken cancellationToken = default) =>
-        await _context.HouseholdMembers.AddAsync(member, cancellationToken);
-
     public Task<HouseholdMember?> GetByIdAsync(HouseholdMemberId id, CancellationToken cancellationToken = default) =>
         _context.HouseholdMembers.FirstOrDefaultAsync(member => member.Id == id, cancellationToken);
 
     public async Task<IReadOnlyList<HouseholdMember>> GetAllAsync(CancellationToken cancellationToken = default) =>
         await _context.HouseholdMembers.ToListAsync(cancellationToken);
+
+    public void Save(HouseholdMember member)
+    {
+        if (_context.Entry(member).State == EntityState.Detached)
+        {
+            _context.HouseholdMembers.Add(member);
+        }
+    }
 
     public void Remove(HouseholdMember member) => _context.HouseholdMembers.Remove(member);
 }

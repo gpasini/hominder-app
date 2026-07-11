@@ -34,5 +34,6 @@ public sealed class MarkMaintenanceTaskDoneHandler : IRequestHandler<MarkMainten
             ?? throw new NotFoundException("Membre introuvable.");
 
         task.MarkDone(request.CompletedOn, completedBy, request.NextDueOverride);
+        _tasks.Save(task);
     }
 }

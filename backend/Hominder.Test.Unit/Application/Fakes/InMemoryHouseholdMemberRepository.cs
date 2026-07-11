@@ -7,17 +7,19 @@ public sealed class InMemoryHouseholdMemberRepository : IHouseholdMemberReposito
 {
     public List<HouseholdMember> Items { get; } = [];
 
-    public Task AddAsync(HouseholdMember member, CancellationToken cancellationToken = default)
-    {
-        Items.Add(member);
-        return Task.CompletedTask;
-    }
-
     public Task<HouseholdMember?> GetByIdAsync(HouseholdMemberId id, CancellationToken cancellationToken = default) =>
         Task.FromResult(Items.FirstOrDefault(member => member.Id == id));
 
     public Task<IReadOnlyList<HouseholdMember>> GetAllAsync(CancellationToken cancellationToken = default) =>
         Task.FromResult<IReadOnlyList<HouseholdMember>>(Items);
+
+    public void Save(HouseholdMember member)
+    {
+        if (!Items.Contains(member))
+        {
+            Items.Add(member);
+        }
+    }
 
     public void Remove(HouseholdMember member) => Items.Remove(member);
 }
