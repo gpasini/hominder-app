@@ -50,6 +50,8 @@ public sealed class MaintenanceTask : AggregateRoot<MaintenanceTaskId>
         AssigneeId = assigneeId;
     }
 
+    public void Unassign() => AssigneeId = null;
+
     public void MarkDone(DateOnly completedOn, HouseholdMemberId completedBy, DateOnly? nextDueOverride)
     {
         var completedDates = CompletedDates();

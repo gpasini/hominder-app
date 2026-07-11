@@ -1,8 +1,44 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { api } from '../../api/client'
-import type { RecurrencePolicyInput, TaskView } from './taskStatus'
+import type { components } from '../../api/schema'
+import type { RecurrencePolicyInput, TaskStatus, TaskView } from './taskStatus'
+
+type MaintenanceTaskViewSchema = components['schemas']['MaintenanceTaskView']
+type RecurrencePolicyInputSchema = components['schemas']['RecurrencePolicyInput']
 
 const tasksKey = ['tasks'] as const
+
+function toNumberOrNull(value: number | string | null): number | null {
+  return value === null ? null : Number(value)
+}
+
+function toRecurrencePolicyInput(policy: RecurrencePolicyInputSchema): RecurrencePolicyInput {
+  return {
+    kind: policy.kind,
+    intervalAmount: toNumberOrNull(policy.intervalAmount),
+    intervalUnit: policy.intervalUnit,
+    startReference: policy.startReference,
+    startMonth: toNumberOrNull(policy.startMonth),
+    endMonth: toNumberOrNull(policy.endMonth),
+    dueDate: policy.dueDate,
+  }
+}
+
+function toTaskView(view: MaintenanceTaskViewSchema): TaskView {
+  return {
+    id: view.id,
+    title: view.title,
+    notes: view.notes,
+    status: view.status as TaskStatus,
+    openDate: view.openDate,
+    dueDate: view.dueDate,
+    daysOverdue: Number(view.daysOverdue),
+    assigneeId: view.assigneeId,
+    assigneeName: view.assigneeName,
+    requiresNextDueOverride: view.requiresNextDueOverride,
+    policy: toRecurrencePolicyInput(view.policy),
+  }
+}
 
 export type TaskInput = {
   title: string
@@ -26,7 +62,7 @@ export function useTasks() {
       if (error) {
         throw new Error('Chargement des tâches impossible.')
       }
-      return (data ?? []) as TaskView[]
+      return (data ?? []).map(toTaskView)
     },
   })
 }

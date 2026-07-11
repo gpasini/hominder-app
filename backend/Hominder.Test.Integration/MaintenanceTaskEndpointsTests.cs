@@ -25,6 +25,8 @@ public class MaintenanceTaskEndpointsTests : IClassFixture<HominderApiFactory>
 
     private sealed record CreatedResponse(Guid Id);
 
+    private sealed record CreateMemberBody(string Name);
+
     [Fact]
     public async Task CreateThenList_ReturnsTaskWithComputedStatus()
     {
@@ -52,9 +54,12 @@ public class MaintenanceTaskEndpointsTests : IClassFixture<HominderApiFactory>
             "/api/tasks", new CreateBody("Contrôle technique", null, policy, null));
         var created = await create.Content.ReadFromJsonAsync<CreatedResponse>();
 
+        var createMember = await client.PostAsJsonAsync("/api/members", new CreateMemberBody("Grégory"));
+        var member = await createMember.Content.ReadFromJsonAsync<CreatedResponse>();
+
         var mark = await client.PostAsJsonAsync(
             $"/api/tasks/{created!.Id}/completions",
-            new MarkDoneBody(new DateOnly(2026, 6, 20), Guid.NewGuid(), new DateOnly(2028, 6, 30)));
+            new MarkDoneBody(new DateOnly(2026, 6, 20), member!.Id, new DateOnly(2028, 6, 30)));
 
         Assert.Equal(HttpStatusCode.NoContent, mark.StatusCode);
     }

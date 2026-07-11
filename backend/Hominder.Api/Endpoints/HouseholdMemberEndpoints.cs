@@ -1,6 +1,7 @@
 using Hominder.Application.Household.Commands;
 using Hominder.Application.Household.Queries;
 using MediatR;
+using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace Hominder.Api.Endpoints;
 
@@ -12,8 +13,9 @@ public static class HouseholdMemberEndpoints
     {
         var group = routes.MapGroup("/api/members");
 
-        group.MapGet("", async (ISender sender, CancellationToken cancellationToken) =>
-            Results.Ok(await sender.Send(new GetHouseholdMembersQuery(), cancellationToken)));
+        group.MapGet("", async Task<Ok<IReadOnlyList<HouseholdMemberView>>> (
+            ISender sender, CancellationToken cancellationToken) =>
+            TypedResults.Ok(await sender.Send(new GetHouseholdMembersQuery(), cancellationToken)));
 
         group.MapPost("", async (
             CreateHouseholdMemberRequest request, ISender sender, CancellationToken cancellationToken) =>

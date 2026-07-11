@@ -211,7 +211,9 @@ export interface paths {
                     headers: {
                         [name: string]: unknown;
                     };
-                    content?: never;
+                    content: {
+                        "application/json": components["schemas"]["HouseholdMemberView"][];
+                    };
                 };
             };
         };
@@ -292,6 +294,11 @@ export interface components {
             policy: components["schemas"]["RecurrencePolicyInput"];
             /** Format: uuid */
             assigneeId: null | string;
+        };
+        HouseholdMemberView: {
+            /** Format: uuid */
+            id: string;
+            name: string;
         };
         MaintenanceTaskView: {
             /** Format: uuid */

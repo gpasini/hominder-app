@@ -1,6 +1,7 @@
 using Hominder.Application.Common.Exceptions;
 using Hominder.Application.Maintenance;
 using Hominder.Application.Maintenance.Commands;
+using Hominder.Domain.Household;
 using Hominder.Domain.Maintenance;
 using Hominder.Test.Unit.Application.Fakes;
 
@@ -44,13 +45,29 @@ public class MaintenanceTaskCommandsTests
         var repository = new InMemoryMaintenanceTaskRepository();
         var task = MaintenanceTask.Create("CT", null, RecurrencePolicyFactory.Create(FixedDate(new DateOnly(2026, 6, 30))), null);
         repository.Items.Add(task);
-        var handler = new MarkMaintenanceTaskDoneHandler(repository);
+        var members = new InMemoryHouseholdMemberRepository();
+        var member = HouseholdMember.Create("Grégory");
+        members.Items.Add(member);
+        var handler = new MarkMaintenanceTaskDoneHandler(repository, members);
 
         await handler.Handle(
-            new MarkMaintenanceTaskDoneCommand(task.Id.Value, new DateOnly(2026, 6, 20), Guid.NewGuid(), new DateOnly(2028, 6, 30)),
+            new MarkMaintenanceTaskDoneCommand(task.Id.Value, new DateOnly(2026, 6, 20), member.Id.Value, new DateOnly(2028, 6, 30)),
             CancellationToken.None);
 
         Assert.Single(task.Completions);
+    }
+
+    [Fact]
+    public async Task MarkDone_UnknownCompletedBy_Throws()
+    {
+        var repository = new InMemoryMaintenanceTaskRepository();
+        var task = MaintenanceTask.Create("CT", null, RecurrencePolicyFactory.Create(FixedDate(new DateOnly(2026, 6, 30))), null);
+        repository.Items.Add(task);
+        var handler = new MarkMaintenanceTaskDoneHandler(repository, new InMemoryHouseholdMemberRepository());
+
+        await Assert.ThrowsAsync<NotFoundException>(() => handler.Handle(
+            new MarkMaintenanceTaskDoneCommand(task.Id.Value, new DateOnly(2026, 6, 20), Guid.NewGuid(), new DateOnly(2028, 6, 30)),
+            CancellationToken.None));
     }
 
     [Fact]

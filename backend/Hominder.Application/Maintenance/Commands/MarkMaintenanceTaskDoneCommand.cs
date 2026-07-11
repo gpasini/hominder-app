@@ -15,14 +15,24 @@ public sealed record MarkMaintenanceTaskDoneCommand(
 
 public sealed class MarkMaintenanceTaskDoneHandler : IRequestHandler<MarkMaintenanceTaskDoneCommand>
 {
-    private readonly IMaintenanceTaskRepository _repository;
+    private readonly IMaintenanceTaskRepository _tasks;
+    private readonly IHouseholdMemberRepository _members;
 
-    public MarkMaintenanceTaskDoneHandler(IMaintenanceTaskRepository repository) => _repository = repository;
+    public MarkMaintenanceTaskDoneHandler(IMaintenanceTaskRepository tasks, IHouseholdMemberRepository members)
+    {
+        _tasks = tasks;
+        _members = members;
+    }
 
     public async Task Handle(MarkMaintenanceTaskDoneCommand request, CancellationToken cancellationToken)
     {
-        var task = await _repository.GetByIdAsync(new MaintenanceTaskId(request.TaskId), cancellationToken)
+        var task = await _tasks.GetByIdAsync(new MaintenanceTaskId(request.TaskId), cancellationToken)
             ?? throw new NotFoundException("Tâche introuvable.");
-        task.MarkDone(request.CompletedOn, new HouseholdMemberId(request.CompletedBy), request.NextDueOverride);
+
+        var completedBy = new HouseholdMemberId(request.CompletedBy);
+        _ = await _members.GetByIdAsync(completedBy, cancellationToken)
+            ?? throw new NotFoundException("Membre introuvable.");
+
+        task.MarkDone(request.CompletedOn, completedBy, request.NextDueOverride);
     }
 }

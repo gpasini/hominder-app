@@ -1,7 +1,8 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { api } from '../../api/client'
+import type { components } from '../../api/schema'
 
-export type Member = { id: string; name: string }
+export type Member = components['schemas']['HouseholdMemberView']
 
 const membersKey = ['members'] as const
 
@@ -13,7 +14,7 @@ export function useMembers() {
       if (error) {
         throw new Error('Chargement des membres impossible.')
       }
-      return (data ?? []) as Member[]
+      return data ?? []
     },
   })
 }
