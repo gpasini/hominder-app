@@ -17,26 +17,33 @@ export function MembersScreen() {
   }
 
   return (
-    <section>
-      <h2>Membres du foyer</h2>
-      <form onSubmit={submit}>
+    <section className="panel">
+      <h2 className="panel__title">Membres du foyer</h2>
+      <form className="row" onSubmit={submit}>
         <input
           value={name}
           onChange={(event) => setName(event.target.value)}
           placeholder="Nom du membre"
         />
-        <button type="submit" disabled={createMember.isPending}>
+        <button type="submit" className="btn btn--primary" disabled={createMember.isPending}>
           Ajouter
         </button>
       </form>
 
-      {members.isLoading ? <p>Chargement…</p> : null}
+      {members.isLoading ? <p className="loading">Chargement…</p> : null}
 
-      <ul>
+      <ul className="members">
         {(members.data ?? []).map((member) => (
-          <li key={member.id}>
-            <span>{member.name}</span>
-            <button type="button" onClick={() => deleteMember.mutate(member.id)}>
+          <li className="member" key={member.id}>
+            <span className="member__name">
+              <span className="avatar">{member.name.trim().charAt(0).toUpperCase()}</span>
+              {member.name}
+            </span>
+            <button
+              type="button"
+              className="btn btn--danger btn--sm"
+              onClick={() => deleteMember.mutate(member.id)}
+            >
               Supprimer
             </button>
           </li>

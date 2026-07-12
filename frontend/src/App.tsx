@@ -41,64 +41,78 @@ function App() {
     null
 
   return (
-    <main>
-      <header>
-        <h1>Hominder</h1>
+    <main className="app">
+      <header className="app__bar">
+        <h1 className="app__brand">Hominder</h1>
+        <button
+          type="button"
+          className="btn btn--primary"
+          onClick={() => {
+            setTaskToEdit(null)
+            setShowForm(true)
+          }}
+        >
+          + Nouvelle tâche
+        </button>
       </header>
 
-      <button
-        type="button"
-        onClick={() => {
-          setTaskToEdit(null)
-          setShowForm(true)
-        }}
-      >
-        Nouvelle tâche
-      </button>
+      <div className="app__content">
+        {taskError ? (
+          <p className="alert" role="alert">
+            {taskError}
+          </p>
+        ) : null}
 
-      {taskError ? <p role="alert">{taskError}</p> : null}
+        {tasks.isLoading ? <p className="loading">Chargement…</p> : null}
+
+        <TaskList
+          tasks={tasks.data ?? []}
+          onMarkDone={(task) => setTaskToComplete(task)}
+          onEdit={(task) => {
+            setTaskToEdit(task)
+            setShowForm(true)
+          }}
+          onDelete={(task) => deleteTask.mutate(task.id)}
+        />
+
+        <MembersScreen />
+      </div>
 
       {showForm ? (
-        <TaskForm
-          key={taskToEdit?.id ?? 'new'}
-          members={memberList}
-          initialTask={taskToEdit ?? undefined}
-          onCancel={closeForm}
-          onSubmit={(input) => {
-            if (taskToEdit) {
-              updateTask.mutate({ id: taskToEdit.id, input }, { onSuccess: closeForm })
-            } else {
-              createTask.mutate(input, { onSuccess: closeForm })
-            }
-          }}
-        />
+        <div className="modal-backdrop" onClick={closeForm}>
+          <div onClick={(event) => event.stopPropagation()}>
+            <TaskForm
+              key={taskToEdit?.id ?? 'new'}
+              members={memberList}
+              initialTask={taskToEdit ?? undefined}
+              onCancel={closeForm}
+              onSubmit={(input) => {
+                if (taskToEdit) {
+                  updateTask.mutate({ id: taskToEdit.id, input }, { onSuccess: closeForm })
+                } else {
+                  createTask.mutate(input, { onSuccess: closeForm })
+                }
+              }}
+            />
+          </div>
+        </div>
       ) : null}
-
-      {tasks.isLoading ? <p>Chargement…</p> : null}
-
-      <TaskList
-        tasks={tasks.data ?? []}
-        onMarkDone={(task) => setTaskToComplete(task)}
-        onEdit={(task) => {
-          setTaskToEdit(task)
-          setShowForm(true)
-        }}
-        onDelete={(task) => deleteTask.mutate(task.id)}
-      />
 
       {taskToComplete ? (
-        <MarkDoneDialog
-          task={taskToComplete}
-          members={memberList}
-          requiresNextDue={taskToComplete.requiresNextDueOverride}
-          onCancel={() => setTaskToComplete(null)}
-          onConfirm={(input) => {
-            markDone.mutate(input, { onSuccess: () => setTaskToComplete(null) })
-          }}
-        />
+        <div className="modal-backdrop" onClick={() => setTaskToComplete(null)}>
+          <div onClick={(event) => event.stopPropagation()}>
+            <MarkDoneDialog
+              task={taskToComplete}
+              members={memberList}
+              requiresNextDue={taskToComplete.requiresNextDueOverride}
+              onCancel={() => setTaskToComplete(null)}
+              onConfirm={(input) => {
+                markDone.mutate(input, { onSuccess: () => setTaskToComplete(null) })
+              }}
+            />
+          </div>
+        </div>
       ) : null}
-
-      <MembersScreen />
     </main>
   )
 }

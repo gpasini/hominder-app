@@ -85,7 +85,8 @@ export function TaskForm({ members, initialTask, onSubmit, onCancel }: TaskFormP
   const setKind = (kind: RecurrenceKind) => setPolicy(defaultPolicyFor(kind))
 
   return (
-    <form onSubmit={submit}>
+    <form className="modal" onSubmit={submit}>
+      <h3 className="modal__title">{initialTask ? 'Modifier la tâche' : 'Nouvelle tâche'}</h3>
       <input value={title} onChange={(event) => setTitle(event.target.value)} placeholder="Titre" />
       <textarea value={notes} onChange={(event) => setNotes(event.target.value)} placeholder="Notes" />
 
@@ -107,20 +108,26 @@ export function TaskForm({ members, initialTask, onSubmit, onCancel }: TaskFormP
 
       {policy.kind === 'MonthWindow' ? (
         <fieldset>
-          <input
-            type="number"
-            min={1}
-            max={12}
-            value={policy.startMonth ?? 1}
-            onChange={(event) => setPolicy({ ...policy, startMonth: Number(event.target.value) })}
-          />
-          <input
-            type="number"
-            min={1}
-            max={12}
-            value={policy.endMonth ?? 1}
-            onChange={(event) => setPolicy({ ...policy, endMonth: Number(event.target.value) })}
-          />
+          <label>
+            Mois de début
+            <input
+              type="number"
+              min={1}
+              max={12}
+              value={policy.startMonth ?? 1}
+              onChange={(event) => setPolicy({ ...policy, startMonth: Number(event.target.value) })}
+            />
+          </label>
+          <label>
+            Mois de fin
+            <input
+              type="number"
+              min={1}
+              max={12}
+              value={policy.endMonth ?? 1}
+              onChange={(event) => setPolicy({ ...policy, endMonth: Number(event.target.value) })}
+            />
+          </label>
         </fieldset>
       ) : null}
 
@@ -157,12 +164,20 @@ export function TaskForm({ members, initialTask, onSubmit, onCancel }: TaskFormP
         />
       ) : null}
 
-      {validationMessage ? <p role="alert">{validationMessage}</p> : null}
+      {validationMessage ? (
+        <p className="alert" role="alert">
+          {validationMessage}
+        </p>
+      ) : null}
 
-      <button type="submit">Enregistrer</button>
-      <button type="button" onClick={onCancel}>
-        Annuler
-      </button>
+      <div className="modal__actions">
+        <button type="button" className="btn btn--ghost" onClick={onCancel}>
+          Annuler
+        </button>
+        <button type="submit" className="btn btn--primary">
+          Enregistrer
+        </button>
+      </div>
     </form>
   )
 }

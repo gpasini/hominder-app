@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+#MISE description="Run the backend API and frontend dev servers together"
+set -euo pipefail
+exec mise run "//backend:dev" ::: "//frontend:dev"

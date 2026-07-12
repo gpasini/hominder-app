@@ -35,6 +35,10 @@ const statusOrder: Record<TaskStatus, number> = {
   Done: 3,
 }
 
+export function statusModifier(status: TaskStatus): string {
+  return status.toLowerCase()
+}
+
 export function statusLabel(status: TaskStatus): string {
   switch (status) {
     case 'Overdue':

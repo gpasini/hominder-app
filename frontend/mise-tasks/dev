@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+#MISE description="Run the frontend dev server locally"
+set -euo pipefail
+npm run dev

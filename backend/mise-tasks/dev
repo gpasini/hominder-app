@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+#MISE description="Run the backend API locally"
+#MISE depends=["//:db-up"]
+set -euo pipefail
+dotnet run --project Hominder.Api --launch-profile http

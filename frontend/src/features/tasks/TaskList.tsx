@@ -1,4 +1,4 @@
-import { groupByStatus, statusLabel, type TaskView } from './taskStatus'
+import { groupByStatus, statusLabel, statusModifier, type TaskView } from './taskStatus'
 import { TaskCard } from './TaskCard'
 
 type TaskListProps = {
@@ -12,23 +12,29 @@ export function TaskList({ tasks, onMarkDone, onEdit, onDelete }: TaskListProps)
   const groups = groupByStatus(tasks)
 
   if (groups.length === 0) {
-    return <p>Aucune tâche pour l'instant.</p>
+    return <p className="empty">Aucune tâche pour l'instant.</p>
   }
 
   return (
-    <div>
+    <div className="stack">
       {groups.map(([status, groupTasks]) => (
-        <section key={status}>
-          <h2>{statusLabel(status)}</h2>
-          {groupTasks.map((task) => (
-            <TaskCard
-              key={task.id}
-              task={task}
-              onMarkDone={onMarkDone}
-              onEdit={onEdit}
-              onDelete={onDelete}
-            />
-          ))}
+        <section className="group" key={status}>
+          <h2 className="group__title">
+            <span className={`group__dot group__dot--${statusModifier(status)}`} />
+            {statusLabel(status)}
+            <span className="group__count">{groupTasks.length}</span>
+          </h2>
+          <div className="cards">
+            {groupTasks.map((task) => (
+              <TaskCard
+                key={task.id}
+                task={task}
+                onMarkDone={onMarkDone}
+                onEdit={onEdit}
+                onDelete={onDelete}
+              />
+            ))}
+          </div>
         </section>
       ))}
     </div>
