@@ -28,13 +28,6 @@ export type TaskView = {
   policy: RecurrencePolicyInput
 }
 
-const statusOrder: Record<TaskStatus, number> = {
-  Overdue: 0,
-  Due: 1,
-  Upcoming: 2,
-  Done: 3,
-}
-
 export function statusModifier(status: TaskStatus): string {
   return status.toLowerCase()
 }
@@ -52,12 +45,3 @@ export function statusLabel(status: TaskStatus): string {
   }
 }
 
-export function groupByStatus(tasks: TaskView[]): [TaskStatus, TaskView[]][] {
-  const groups = new Map<TaskStatus, TaskView[]>()
-  for (const task of tasks) {
-    const list = groups.get(task.status) ?? []
-    list.push(task)
-    groups.set(task.status, list)
-  }
-  return [...groups.entries()].sort((left, right) => statusOrder[left[0]] - statusOrder[right[0]])
-}
