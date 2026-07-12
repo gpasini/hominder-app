@@ -9,9 +9,5 @@ export function useKioskMode() {
     setMode((current) => (current === 'consultation' ? 'gestion' : 'consultation'))
   }, [])
 
-  const reset = useCallback(() => {
-    setMode('consultation')
-  }, [])
-
-  return { mode, isGestion: mode === 'gestion', toggle, reset }
+  return { isGestion: mode === 'gestion', toggle }
 }
