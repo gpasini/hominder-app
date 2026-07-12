@@ -356,3 +356,306 @@ fieldset {
     transform: translateY(8px) scale(0.98);
   }
 }
+
+:root {
+  --status-overdue: #dc2626;
+  --status-due: #f59e0b;
+  --status-upcoming: #6b7280;
+  --status-done: #10b981;
+  --kiosk-gap: 16px;
+}
+
+.kiosk {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+}
+
+.kiosk__header {
+  display: flex;
+  align-items: center;
+  gap: var(--kiosk-gap);
+  padding: 12px 24px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.kiosk__brand {
+  display: flex;
+  align-items: baseline;
+  gap: 16px;
+}
+
+.kiosk__logo {
+  font-size: 1.6rem;
+  font-weight: 700;
+}
+
+.kiosk__datetime {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  color: #6b7280;
+}
+
+.kiosk__date {
+  text-transform: capitalize;
+}
+
+.kiosk__time {
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+}
+
+.kiosk__tabs {
+  display: flex;
+  gap: 8px;
+  margin-left: auto;
+}
+
+.kiosk__tab {
+  border: none;
+  background: transparent;
+  padding: 8px 20px;
+  font-size: 1.1rem;
+  border-radius: 999px;
+  cursor: pointer;
+}
+
+.kiosk__tab--active {
+  background: #111827;
+  color: #fff;
+}
+
+.kiosk__body {
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  padding: var(--kiosk-gap);
+}
+
+.agenda {
+  display: grid;
+  grid-template-columns: minmax(280px, 340px) 1fr;
+  gap: var(--kiosk-gap);
+  height: 100%;
+  min-height: 0;
+}
+
+.agenda__sidebar {
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.agenda__calendar {
+  overflow: auto;
+  min-width: 0;
+}
+
+.agenda__new {
+  width: 100%;
+}
+
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.sidebar__section {
+  margin-bottom: 8px;
+}
+
+.sidebar__title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 1rem;
+  margin: 0 0 6px;
+}
+
+.sidebar__dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+.sidebar__dot--overdue {
+  background: var(--status-overdue);
+}
+
+.sidebar__dot--due {
+  background: var(--status-due);
+}
+
+.sidebar__dot--upcoming {
+  background: var(--status-upcoming);
+}
+
+.sidebar__count {
+  margin-left: auto;
+  color: #9ca3af;
+}
+
+.sidebar__empty {
+  color: #9ca3af;
+  font-size: 0.85rem;
+  margin: 0 0 8px;
+}
+
+.sidebar__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.sidebar__item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border-left: 4px solid transparent;
+  padding-left: 8px;
+}
+
+.sidebar__item--overdue {
+  border-left-color: var(--status-overdue);
+}
+
+.sidebar__item--due {
+  border-left-color: var(--status-due);
+}
+
+.sidebar__item--upcoming {
+  border-left-color: var(--status-upcoming);
+}
+
+.sidebar__task {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  border: none;
+  background: transparent;
+  text-align: left;
+  padding: 6px 4px;
+  cursor: pointer;
+  font-size: 1rem;
+}
+
+.sidebar__task-title {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.sidebar__task-late {
+  color: var(--status-overdue);
+  font-weight: 600;
+  font-size: 0.85rem;
+}
+
+.sidebar__actions {
+  display: flex;
+  gap: 4px;
+}
+
+.week {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 8px;
+  height: 100%;
+  min-height: 0;
+}
+
+.week__day {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 12px;
+  overflow: hidden;
+  min-height: 0;
+}
+
+.week__day-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  padding: 8px 10px;
+  background: rgba(0, 0, 0, 0.03);
+}
+
+.week__weekday {
+  text-transform: capitalize;
+  color: #6b7280;
+  font-size: 0.85rem;
+}
+
+.week__daynum {
+  font-weight: 700;
+}
+
+.week__items {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 8px;
+  overflow-y: auto;
+}
+
+.chip {
+  border: none;
+  border-radius: 8px;
+  padding: 6px 8px;
+  text-align: left;
+  cursor: pointer;
+  color: #fff;
+  font-size: 0.85rem;
+  line-height: 1.2;
+}
+
+.chip--overdue {
+  background: var(--status-overdue);
+}
+
+.chip--due {
+  background: var(--status-due);
+}
+
+.chip--upcoming {
+  background: var(--status-upcoming);
+}
+
+.chip--done {
+  background: var(--status-done);
+}
+
+.placeholder {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  color: #9ca3af;
+}
+
+.placeholder__icon {
+  font-size: 4rem;
+  margin: 0;
+}
+
+.placeholder__title {
+  margin: 0;
+  color: #6b7280;
+}
+
+.placeholder__text {
+  margin: 0;
+}
