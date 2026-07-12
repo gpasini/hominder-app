@@ -7,9 +7,13 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "oxlint",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "generate:api": "openapi-typescript http://localhost:5191/openapi/v1.json -o src/api/schema.d.ts",
+    "test": "vitest run"
   },
   "dependencies": {
+    "@tanstack/react-query": "^5.101.2",
+    "openapi-fetch": "^0.17.0",
     "react": "^19.2.7",
     "react-dom": "^19.2.7"
   },
@@ -18,8 +22,10 @@
     "@types/react": "^19.2.17",
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^6.0.3",
+    "openapi-typescript": "^7.13.0",
     "oxlint": "^1.71.0",
     "typescript": "~6.0.2",
-    "vite": "^8.1.1"
+    "vite": "^8.1.1",
+    "vitest": "^4.1.10"
   }
 }

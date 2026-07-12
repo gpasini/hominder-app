@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+#MISE description="Start the local Postgres database"
+#MISE depends=["//:colima-up"]
+set -euo pipefail
+docker compose up -d db
